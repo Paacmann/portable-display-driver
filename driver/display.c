@@ -38,29 +38,6 @@ enum display_status display_send_command(display_t *disp, uint8_t cmd) {
 }
 
 
-enum display_status display_send_data(display_t *disp, uint8_t *data, size_t size) {
-
-    enum display_status status;
-    status = validate_device(disp);
-
-    if (status != DISPLAY_SUCCESS) {
-        return status;
-    }
-
-    if (data == NULL || size == 0u) {
-        return DISPLAY_EINVAL;
-    }
-
-    if (disp->dev.i2c_write == NULL) {
-        return DISPLAY_EINVAL;
-    }
-    
-    status = disp->dev.i2c_write(disp->dev.context, disp->address, data, (uint16_t)size);
-
-    return status;
-}
-
-
 enum display_status display_on(display_t *disp) {
 
     return display_send_command(disp, DISPLAY_CMD_DISPLAY_ON);
@@ -102,7 +79,7 @@ enum display_status display_init(display_t *disp) {
 
 static enum display_status validate_device(display_t *disp) {
     
-    if (disp == NULL) {
+   if (disp == NULL) {
         return DISPLAY_ENODEV;
     }
     
@@ -212,6 +189,7 @@ enum display_status display_update(display_t *disp)
                 tx,
                 2
             );
+    
 
             if (st != DISPLAY_SUCCESS) {
                 return st;

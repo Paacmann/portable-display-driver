@@ -102,9 +102,6 @@ enum display_status display_off(display_t *disp);
 
 enum display_status display_send_command(display_t *disp, uint8_t cmd);
 
-// Send raw data buffer.
-
-enum display_status display_send_data(display_t *disp, uint8_t *data, size_t size);
 
 // clear display 
 

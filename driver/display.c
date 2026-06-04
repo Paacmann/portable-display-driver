@@ -186,25 +186,36 @@ enum display_status display_update(display_t *disp)
         
         return DISPLAY_ENODEV;
     }
+    
+    if (disp->dev.i2c_write == NULL) {
+        return DISPLAY_EINVAL;
+    }
 
-    for (uint8_t page = 0; page < 8; page++)
+    uint8_t pages = disp->height / 8;
+    uint8_t cols = disp->width;
+
+    for (uint8_t page = 0; page < pages; page++)
     {
         display_send_command(disp, (uint8_t)(0xB0 + page)); // set page
         display_send_command(disp, 0x00);        // low col
         display_send_command(disp, 0x10);        // high col
 
-        for (uint8_t col = 0; col < 128; col++)
+        for (uint8_t col = 0; col < cols; col++)
         {
             uint8_t tx[2u];
             tx[0] = 0x40; // DATA mode
             tx[1] = disp->buffer[page * 128 + col];
 
-            disp->dev.i2c_write(
+            enum display_status st = disp->dev.i2c_write(
                 disp->dev.context,
                 disp->address,
                 tx,
                 2
             );
+
+            if (st != DISPLAY_SUCCESS) {
+                return st;
+            }
         }
     }
 

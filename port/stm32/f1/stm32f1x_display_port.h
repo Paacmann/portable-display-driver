@@ -1,7 +1,7 @@
 #ifndef STM32F1X_DISPLAY_PORT_H
 #define STM32F1X_DISPLAY_PORT_H
 
-#include "/home/petar/Desktop/portable-display-driver/driver/display.h"
+#include "display.h"
 
 typedef struct
 {

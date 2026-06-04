@@ -1,5 +1,6 @@
 add_library(portable_display_driver STATIC 
     display.c
+    fonts.c
 )
 
 target_include_directories(portable_display_driver PUBLIC

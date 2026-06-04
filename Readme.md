@@ -1,7 +1,7 @@
 # Portable Display Driver
 
 <p align="center">
-  <img src=".docs/portable_display.jpeg" alt="Portable Display Driver" width="640">
+  <img src="./ .docs/portable-display.jpeg" alt="Portable Display Driver" width="640">
 </p>
 
 ## Intro

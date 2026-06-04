@@ -17,6 +17,7 @@
    ----------------------------------------------------------------------
  */
 #include "fonts.h"
+#include <stdint.h>
 
 const uint16_t Font7x10 [] = {
 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,  // sp
@@ -334,7 +335,7 @@ FontDef_t Font_16x26 = {
 char* FONTS_GetStringSize(char* str, FONTS_SIZE_t* SizeStruct, FontDef_t* Font) {
 	/* Fill settings */
 	SizeStruct->Height = Font->FontHeight;
-	SizeStruct->Length = Font->FontWidth * strlen(str);
+	SizeStruct->Length = (uint16_t)((uint16_t)Font->FontWidth * ((uint16_t)strlen(str)));
 	
 	/* Return pointer */
 	return str;

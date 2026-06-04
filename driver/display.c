@@ -80,6 +80,14 @@ enum display_status display_init(display_t *disp) {
         return status;
     }
 
+    if (disp->height == 0) {
+        disp->height = DISPLAY_HEIGHT;
+    }
+
+    if (disp->width == 0) {
+        disp->width = DISPLAY_WIDTH;
+    }
+
     status = send_init_seq(disp);
     if (status != DISPLAY_SUCCESS) { 
         return status;

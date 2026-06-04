@@ -20,7 +20,7 @@
    ----------------------------------------------------------------------
  */
 #ifndef FONTS_H
-#define FONTS_H 120  
+#define FONTS_H  
 /* C++ detection */
 #ifdef __cplusplus
 extern "C" {

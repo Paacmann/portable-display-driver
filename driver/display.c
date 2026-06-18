@@ -157,8 +157,8 @@ enum display_status display_clear(display_t *disp) {
 }
 
 
-enum display_status display_update(display_t *disp)
-{
+enum display_status display_update(display_t *disp) {
+    
     if (!disp) {
         
         return DISPLAY_ENODEV;
@@ -171,14 +171,13 @@ enum display_status display_update(display_t *disp)
     uint8_t pages = disp->height / 8;
     uint8_t cols = disp->width;
 
-    for (uint8_t page = 0; page < pages; page++)
-    {
+    for (uint8_t page = 0; page < pages; page++) {
         display_send_command(disp, (uint8_t)(0xB0 + page)); // set page
         display_send_command(disp, 0x00);        // low col
         display_send_command(disp, 0x10);        // high col
 
-        for (uint8_t col = 0; col < cols; col++)
-        {
+        for (uint8_t col = 0; col < cols; col++) {
+            
             uint8_t tx[2u];
             tx[0] = 0x40; // DATA mode
             tx[1] = disp->buffer[page * 128 + col];
@@ -200,8 +199,8 @@ enum display_status display_update(display_t *disp)
     return DISPLAY_SUCCESS;
 }
 
-void display_draw_pixel(display_t *disp, uint16_t x, uint16_t y)
-{
+void display_draw_pixel(display_t *disp, uint16_t x, uint16_t y) {
+    
     if (!disp) { 
         
         return ;
@@ -218,8 +217,8 @@ void display_draw_pixel(display_t *disp, uint16_t x, uint16_t y)
 
 
 
-void display_putc(display_t *disp, char c, uint16_t x, uint16_t y)
-{
+void display_putc(display_t *disp, char c, uint16_t x, uint16_t y) {
+    
     if (!disp) { 
         
         return;
@@ -234,32 +233,28 @@ void display_putc(display_t *disp, char c, uint16_t x, uint16_t y)
 
     uint16_t index = (uint16_t)((ch - 32u) * Font_7x10.FontHeight);
 
-    for (uint8_t row = 0; row < Font_7x10.FontHeight; row++)
-    {
+    for (uint8_t row = 0; row < Font_7x10.FontHeight; row++) {
+        
         uint16_t bits = Font_7x10.data[index + row];
 
-        for (uint8_t col = 0; col < Font_7x10.FontWidth; col++)
-        {
-            if (bits & (1u << (15u - col)))
-            {
+        for (uint8_t col = 0; col < Font_7x10.FontWidth; col++) {
+            if (bits & (1u << (15u - col))) {
+
                 display_draw_pixel(disp, (uint16_t)(x + col), (uint16_t)(y + row));
             }
         }
     }
 }
 
-void display_puts(display_t *disp,
-                  const char *str,
-                  uint16_t x,
-                  uint16_t y)
-{
+void display_puts(display_t *disp, const char *str, uint16_t x, uint16_t y) {
+    
     if (!disp || !str) {
 
         return;
     }
 
-    while (*str)
-    {
+    while (*str) {
+        
         display_putc(disp, *str++, x, y);
         x = (uint16_t)(x + (uint16_t)(Font_7x10.FontWidth + 1u));
     }

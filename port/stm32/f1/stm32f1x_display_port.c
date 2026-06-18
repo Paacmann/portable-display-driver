@@ -6,11 +6,8 @@
 
 #define I2C_TIMEOUT_MS 100u
 
-enum display_status i2c_write(void *context,
-                              uint8_t addr,
-                              uint8_t *data,
-                              uint16_t size)
-{
+enum display_status i2c_write(void *context, uint8_t addr, uint8_t *data, uint16_t size) {
+    
     if (!context || !data || !size) {
         
         return DISPLAY_EINVAL;
@@ -71,15 +68,16 @@ enum display_status i2c_write_cmd(void *context, uint8_t addr, uint8_t cmd) {
 
 
 
-uint32_t get_tick_ms(void *context)
-{
+uint32_t get_tick_ms(void *context) {
+    
     (void)context;
 
     return HAL_GetTick();
 }
 
-void delay_ms(void *context, uint32_t delay)
-{
+
+void delay_ms(void *context, uint32_t delay) {
+    
     (void)context;
 
     HAL_Delay(delay);

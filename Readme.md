@@ -1,5 +1,3 @@
-# Portable Display Driver
-
 <p align="center">
   <img src="https://raw.githubusercontent.com/Paacmann/portable-display-driver/refs/heads/master/.docs/portable-display.jpeg" alt="Portable Display Driver" width="640">
 </p>
@@ -9,8 +7,10 @@
 A lightweight, cross-platform display driver library for embedded devices, written in
 portable C11. The driver targets I2C framebuffer displays (e.g. **SSD1306 / SH1106**,
 128×64) and is hardware-agnostic - all platform I/O is supplied by the application through
-function pointers, making it portable across any MCU or operating system. The repository
-ships with a ready-made **STM32F1** port as a reference implementation.
+function pointers, making it portable across any MCU or operating system.
+The repository ships with a ready-made **STM32F1** port as a reference implementation,
+as well as a native Linux simulation port built on top of **SDL2** for desktop
+development, testing and debugging without physical hardware.
 
 ## Design
 
@@ -48,8 +48,19 @@ All hardware interaction is abstracted behind a small set of function pointers h
 | `get_tick_ms` | Optional: return a millisecond tick counter |
 
 The **port** layer connects a specific platform to the driver by implementing those
-callbacks. A reference port for STM32F1 (on top of the ST HAL) lives in
-`port/stm32/f1/`.
+callbacks.
+
+Reference ports are provided for:
+
+- **STM32F1** (`port/stm32/f1/`) – built on top of the ST HAL and intended for
+  deployment on real hardware.
+- **Native Linux Simulator** (`port/native_sim/`) – built on top of SDL2 and
+  intended for desktop development and testing.
+
+The native simulator implements the same callback interface expected by the driver,
+emulates SSD1306 page/column addressing in software and renders the display
+framebuffer into an SDL2 window. This allows applications to be developed and
+debugged on a desktop machine before running on embedded hardware.
 
 ## Driver API
 
@@ -129,6 +140,36 @@ display_update(&disp);
 See `port/stm32/f1/stm32f1x_display_port.c` for a complete STM32F1 reference port built on
 the ST HAL (`HAL_I2C_Master_Transmit`, `HAL_Delay`, `HAL_GetTick`).
 
+
+## Native Linux Simulator
+
+The native Linux simulator provides a desktop implementation of the port layer
+using SDL2. It implements the same callback interface used by embedded targets,
+allowing applications built against the driver API to run unmodified on Linux.
+
+Internally, the simulator emulates the SSD1306 command and addressing model,
+maintains a software framebuffer and renders its contents into an SDL2 window.
+
+Features:
+
+- SDL2-based display rendering
+- SSD1306 page and column addressing emulation
+- Display ON/OFF command support
+- Normal and inverted display modes
+- Portable timing implementation (`clock_gettime()`, `nanosleep()`)
+- Useful for development, debugging and demonstrations without hardware
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Paacmann/portable-display-driver/master/.docs/simulator-display.jpeg"
+       alt="Native Linux Simulator"
+       width="640">
+</p>
+
+The simulator uses the same driver API and callback model as embedded targets,
+making it possible to develop and validate application code on a desktop machine
+before deploying it to a microcontroller.
+
+
 ## Building
 
 The core driver always builds as a standalone static library; platform ports are gated
@@ -138,7 +179,6 @@ behind CMake options.
 cmake -S . -B build -G Ninja
 cmake --build build
 ```
-
 To also build the STM32F1 port (requires an ARM toolchain and the ST HAL on your include
 path):
 
@@ -147,14 +187,22 @@ cmake -S . -B build -G Ninja -DDISPLAY_BUILD_STM32F1_PORT=ON
 cmake --build build
 ```
 
+To build the native Linux simulator (requires SDL2):
+
+```sh
+cmake -S . -B build -G Ninja -DDISPLAY_BUILD_NATIVE_SIM=ON
+cmake --build build
+```
+
 | CMake target | Description |
 |---|---|
 | `portable_display_driver` | Core, platform-independent driver (always built) |
 | `display_port_stm32f1` | STM32F1 reference port (`-DDISPLAY_BUILD_STM32F1_PORT=ON`) |
+| `display_port_linux` | Native Linux SDL2 simulator (`-DDISPLAY_BUILD_NATIVE_SIM=ON`) |
 
 ## License
 
 The bundled font tables (`driver/fonts.c`, `driver/fonts.h`) originate from the
 Majerle/Lutsai LCD font library and are licensed under the **GNU GPLv3**.
 The fonts have been slightly modified for integration into this project 
-(format adjustments and portability changes), but remain GPLv3-licensed.
+(format adjustments and portability changes), but remain GPLv3-licensed. 
